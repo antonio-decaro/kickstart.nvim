@@ -288,6 +288,19 @@ require('lazy').setup({
 
   { 'tpope/vim-fugitive' }, -- Add support for Git management
 
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    opts = {
+      size = 20,
+      open_mapping = [[<c-\>]],
+      hide_numbers = true,
+      shade_terminals = true,
+      start_in_insert = true,
+      direction = 'float',
+    },
+  },
+
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
   -- This is often very useful to both group configuration, as well as handle
