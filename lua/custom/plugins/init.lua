@@ -57,22 +57,6 @@ return {
             })
           end,
         },
-        http = {
-          openai_responses = function()
-            return require('codecompanion.adapters').extend('openai_responses', {
-              schema = {
-                top_p = {
-                  ---@type fun(self: CodeCompanion.HTTPAdapter): boolean | boolean
-                  enabled = function(self)
-                    local model = self.schema.model.default
-                    if model:find 'codex%' then return false end
-                    return true
-                  end,
-                },
-              },
-            })
-          end,
-        },
       },
       interactions = {
         chat = {
