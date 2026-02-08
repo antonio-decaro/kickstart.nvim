@@ -26,6 +26,15 @@ return {
   },
 
   {
+    'mason-org/mason-lspconfig.nvim',
+    opts = {},
+    dependencies = {
+      { 'mason-org/mason.nvim', opts = {} },
+      'neovim/nvim-lspconfig',
+    },
+  },
+
+  {
     'olimorris/codecompanion.nvim',
     version = '^18.0.0',
     dependencies = {
