@@ -16,7 +16,7 @@ return {
     },
   },
 
-  {
+  { -- used to load automatically LSP into the editor
     'mason-org/mason-lspconfig.nvim',
     opts = {},
     dependencies = {

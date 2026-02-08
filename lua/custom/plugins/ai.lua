@@ -1,5 +1,5 @@
 return {
-  {
+  { -- Setup Code Companion for AI-assisted code generation and refactoring
     'olimorris/codecompanion.nvim',
     version = '^18.0.0',
     dependencies = {
@@ -44,5 +44,11 @@ return {
         diff = { enabled = true },
       },
     },
+  },
+
+  { -- Setup GitHub Copilot for AI code suggestions
+    'github/copilot.vim',
+    cmd = 'Copilot',
+    event = 'InsertEnter',
   },
 }
