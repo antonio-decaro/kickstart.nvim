@@ -32,7 +32,7 @@ local function auto_update_self()
   local uv = vim.uv or vim.loop
   local repo = vim.fn.stdpath 'config'
   if not uv.fs_stat(repo .. '/.git') then return end
-  vim.schedule(function() vim.notify('Auto-update: checking for config updates...', vim.log.levels.INFO) end)
+  -- Intentionally silent check to avoid startup noise.
 
   system_async({ 'git', '-C', repo, 'status', '--porcelain' }, function(code, out)
     if code ~= 0 or trim(out) ~= '' then return end
@@ -54,7 +54,14 @@ local function auto_update_self()
                 vim.notify('Auto-update: pulling updates...', vim.log.levels.INFO)
                 system_async({ 'git', '-C', repo, 'pull', '--ff-only' }, function(code6)
                   if code6 ~= 0 then return end
-                  vim.schedule(function() vim.notify('Updated Neovim config from origin.', vim.log.levels.INFO) end)
+                  vim.schedule(function()
+                    vim.notify('Updated Neovim config from origin.', vim.log.levels.INFO)
+                    local restart = vim.fn.confirm('Auto-update: restart Neovim now?', '&Restart\n&Later', 1)
+                    if restart == 1 then
+                      vim.cmd 'silent! wa'
+                      vim.cmd 'qa'
+                    end
+                  end)
                 end)
               end)
             end
