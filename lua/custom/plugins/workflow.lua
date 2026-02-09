@@ -1,5 +1,5 @@
 return {
-  {
+  { -- CMake Tools
     'Civitasv/cmake-tools.nvim',
     opts = {},
     keys = {
