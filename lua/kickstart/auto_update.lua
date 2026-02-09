@@ -38,11 +38,14 @@ local function auto_update_self()
     if code ~= 0 or trim(out) ~= '' then return end
     system_async({ 'git', '-C', repo, 'rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}' }, function(code2, upstream)
       if code2 ~= 0 or trim(upstream) == '' then return end
-      system_async({ 'git', '-C', repo, 'fetch', '--quiet' }, function(code3)
+      local upstream_ref = trim(upstream)
+      local remote, branch = upstream_ref:match('^([^/]+)/(.+)$')
+      if not remote or not branch then return end
+      system_async({ 'git', '-C', repo, 'fetch', '--quiet', remote, branch }, function(code3)
         if code3 ~= 0 then return end
         system_async({ 'git', '-C', repo, 'rev-parse', 'HEAD' }, function(code4, local_sha)
           if code4 ~= 0 then return end
-          system_async({ 'git', '-C', repo, 'rev-parse', trim(upstream) }, function(code5, remote_sha)
+          system_async({ 'git', '-C', repo, 'rev-parse', upstream_ref }, function(code5, remote_sha)
             if code5 ~= 0 then return end
             if trim(local_sha) ~= trim(remote_sha) then
               vim.schedule(function()
@@ -52,7 +55,7 @@ local function auto_update_self()
                   return
                 end
                 vim.notify('Auto-update: pulling updates...', vim.log.levels.INFO)
-                system_async({ 'git', '-C', repo, 'pull', '--ff-only' }, function(code6)
+                system_async({ 'git', '-C', repo, 'pull', '--ff-only', remote, branch }, function(code6)
                   if code6 ~= 0 then return end
                   vim.schedule(function()
                     vim.notify('Updated Neovim config from origin.', vim.log.levels.INFO)
