@@ -41,8 +41,6 @@ return {
         'zt',
         'zz',
         'zb',
-        '<C-u>',
-        '<C-d>',
       },
       hide_cursor = true,
       stop_eof = true,
@@ -64,10 +62,10 @@ return {
       local keymap = vim.keymap.set
 
       -- On many terminals <C-j> is seen as <NL>, so map both:
-      keymap('n', '<C-j>', function() neoscroll.scroll(0.1, { move_cursor = true, duration = 120 }) end, { desc = 'Scroll down (smooth)' })
-      keymap('n', '<C-k>', function() neoscroll.scroll(-0.1, { move_cursor = true, duration = 120 }) end, { desc = 'Scroll up (smooth)' })
-      keymap('n', '<PageDown', function() neoscroll.scroll(vim.wo.scroll, { move_cursor = true, duration = 350 }) end, { desc = 'Scroll Page Down' })
-      keymap('n', '<PageUp', function() neoscroll.scroll(-vim.wo.scroll, { move_cursor = true, duration = 350 }) end, { desc = 'Scroll Page Down' })
+      keymap('n', '<C-d>', function() neoscroll.scroll(0.1, { move_cursor = true, duration = 120 }) end, { desc = 'Scroll down (smooth)' })
+      keymap('n', '<C-u>', function() neoscroll.scroll(-0.1, { move_cursor = true, duration = 120 }) end, { desc = 'Scroll up (smooth)' })
+      keymap('n', '<PageDown>', function() neoscroll.scroll(vim.wo.scroll, { move_cursor = true, duration = 350 }) end, { desc = 'Scroll Page Down' })
+      keymap('n', '<PageUp>', function() neoscroll.scroll(-vim.wo.scroll, { move_cursor = true, duration = 350 }) end, { desc = 'Scroll Page Down' })
     end,
   },
 }
