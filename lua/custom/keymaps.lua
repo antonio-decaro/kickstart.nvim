@@ -29,7 +29,7 @@ util.map('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 --
 --  See `:help wincmd` for a list of all window commands
 
-util.map('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-util.map('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-util.map('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-util.map('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+util.map('n', '<M-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
+util.map('n', '<M-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
+util.map('n', '<M-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+util.map('n', '<M-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })

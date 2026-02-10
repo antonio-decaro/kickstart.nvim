@@ -1,5 +1,5 @@
 return {
-  {
+  { -- A nice dashboard when you open Neovim
     'nvimdev/dashboard-nvim',
     event = 'VimEnter',
     config = function()
@@ -24,7 +24,7 @@ return {
       'rcarriga/nvim-notify',
     },
   },
-  {
+  { -- A nice cursor trail effect
     'sphamba/smear-cursor.nvim',
     opts = {
       opts = {
@@ -38,29 +38,36 @@ return {
     'karb94/neoscroll.nvim',
     opts = {
       mappings = { -- Keys to be mapped to their corresponding default scrolling animation
-        '<C-u>',
-        '<C-d>',
-        '<C-b>',
-        '<C-f>',
-        '<C-y>',
-        '<C-e>',
         'zt',
         'zz',
         'zb',
+        '<C-u>',
+        '<C-d>',
       },
-      hide_cursor = true, -- Hide cursor while scrolling
-      stop_eof = true, -- Stop at <EOF> when scrolling downwards
-      respect_scrolloff = false, -- Stop scrolling when the cursor reaches the scrolloff margin of the file
-      cursor_scrolls_alone = true, -- The cursor will keep on scrolling even if the window cannot scroll further
-      duration_multiplier = 1.0, -- Global duration multiplier
-      easing = 'quadratic', -- Default easing function
-      pre_hook = nil, -- Function to run before the scrolling animation starts
-      post_hook = nil, -- Function to run after the scrolling animation ends
-      performance_mode = false, -- Disable "Performance Mode" on all buffers.
-      ignored_events = { -- Events ignored while scrolling
+      hide_cursor = true,
+      stop_eof = true,
+      respect_scrolloff = false,
+      cursor_scrolls_alone = true,
+      duration_multiplier = 1.0,
+      easing = 'linear',
+      pre_hook = nil,
+      post_hook = nil,
+      performance_mode = false,
+      ignored_events = {
         'WinScrolled',
         'CursorMoved',
       },
     },
+    config = function(_, opts)
+      require('neoscroll').setup(opts)
+      local neoscroll = require 'neoscroll'
+      local keymap = vim.keymap.set
+
+      -- On many terminals <C-j> is seen as <NL>, so map both:
+      keymap('n', '<C-j>', function() neoscroll.scroll(0.1, { move_cursor = true, duration = 120 }) end, { desc = 'Scroll down (smooth)' })
+      keymap('n', '<C-k>', function() neoscroll.scroll(-0.1, { move_cursor = true, duration = 120 }) end, { desc = 'Scroll up (smooth)' })
+      keymap('n', '<PageDown', function() neoscroll.scroll(vim.wo.scroll, { move_cursor = true, duration = 350 }) end, { desc = 'Scroll Page Down' })
+      keymap('n', '<PageUp', function() neoscroll.scroll(-vim.wo.scroll, { move_cursor = true, duration = 350 }) end, { desc = 'Scroll Page Down' })
+    end,
   },
 }
