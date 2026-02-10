@@ -1,48 +1,28 @@
 return {
-  { -- Setup Code Companion for AI-assisted code generation and refactoring
-    'olimorris/codecompanion.nvim',
-    version = '^18.0.0',
-    dependencies = {
-      'nvim-lua/plenary.nvim',
-      'nvim-treesitter/nvim-treesitter',
-      'nvim-telescope/telescope.nvim', -- optional, but recommended for Actions picker
-    },
-    cmd = {
-      'CodeCompanion',
-      'CodeCompanionChat',
-      'CodeCompanionActions',
-      'CodeCompanionCmd',
-    },
+  {
+    'kkrampis/codex.nvim',
+    lazy = true,
+    cmd = { 'Codex', 'CodexToggle' }, -- Optional: Load only on command execution
     keys = {
-      { '<leader>cc', '<cmd>CodeCompanionChat Toggle<cr>', desc = 'CodeCompanion Chat (toggle)' }, -- doc command  [oai_citation:0‡GitHub](https://raw.githubusercontent.com/olimorris/codecompanion.nvim/refs/heads/main/doc/codecompanion.txt?utm_source=chatgpt.com)
-      { '<leader>ca', '<cmd>CodeCompanionActions<cr>', desc = 'CodeCompanion Actions' },
-      { '<leader>ci', '<cmd>CodeCompanion<cr>', mode = { 'n', 'v' }, desc = 'CodeCompanion Inline' },
+      {
+        '<leader>cc', -- Change this to your preferred keybinding
+        function() require('codex').toggle() end,
+        desc = 'Toggle Codex popup or side-panel',
+        mode = { 'n', 't' },
+      },
     },
     opts = {
-      adapters = {
-        acp = {
-          codex = function()
-            return require('codecompanion.adapters').extend('codex', {
-              defaults = {
-                auth_method = 'chatgpt', -- "openai-api-key"|"codex-api-key"|"chatgpt"
-              },
-              -- strongly recommended: do NOT hardcode; use env var instead
-              -- env = { OPENAI_API_KEY = 'my-api-key' },
-            })
-          end,
-        },
-      },
-      interactions = {
-        chat = {
-          adapter = 'codex',
-        },
-        inline = {
-          adapter = 'openai_responses',
-        },
-      },
-      display = {
-        diff = { enabled = true },
-      },
+      keymaps = {
+        toggle = '<leader>c', -- Keybind to toggle Codex window (Disabled by default, watch out for conflicts)
+        quit = '<C-q>', -- Keybind to close the Codex window (default: Ctrl + q)
+      }, -- Disable internal default keymap (<leader>cc -> :CodexToggle)
+      border = 'rounded', -- Options: 'single', 'double', or 'rounded'
+      width = 0.8, -- Width of the floating window (0.0 to 1.0)
+      height = 0.8, -- Height of the floating window (0.0 to 1.0)
+      model = nil, -- Optional: pass a string to use a specific model (e.g., 'o3-mini')
+      autoinstall = true, -- Automatically install the Codex CLI if not found
+      panel = false, -- Open Codex in a side-panel (vertical split) instead of floating window
+      use_buffer = false, -- Capture Codex stdout into a normal buffer instead of a terminal buffer
     },
   },
 
