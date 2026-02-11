@@ -48,13 +48,6 @@ util.map('n', '<leader>Sw', function()
     end
     if name == '' then name = session_name end
     pcall(vim.cmd, 'Neotree close')
-    -- Wipe tree buffers to avoid "Buffer with this name already exists"
-    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-      local ft = vim.bo[buf].filetype
-      local name = vim.api.nvim_buf_get_name(buf)
-
-      if ft == 'Neotree' or ft == 'neo-tree' or name:match 'Neotree_' then pcall(vim.api.nvim_buf_delete, buf, { force = true }) end
-    end
     MiniSessions.write(name)
     vim.notify('Session saved as ' .. name)
   end)

@@ -187,7 +187,10 @@ return {
                 local ft = vim.bo[buf].filetype
                 local name = vim.api.nvim_buf_get_name(buf)
 
-                if ft == 'Neotree' or ft == 'neo-tree' or name:match 'Neotree_' then pcall(vim.api.nvim_buf_delete, buf, { force = true }) end
+                if ft == 'Neotree' or ft == 'neo-tree' or name:match 'Neotree_' then
+                  pcall(vim.api.nvim_buf_delete, buf, { force = true })
+                  vim.notify('Closed leftover NeoTree buffer: ' .. name, vim.log.levels.WARN)
+                end
               end
             end,
           },
