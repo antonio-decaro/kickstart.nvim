@@ -176,7 +176,24 @@ return {
     config = function()
       require('mini.ai').setup { n_lines = 500 }
       require('mini.surround').setup()
-      require('mini.sessions').setup { autoread = false, autowrite = true, directory = '~/.local/share/nvim-sessions/' }
+      require('mini.sessions').setup {
+        autoread = false,
+        autowrite = true,
+        hooks = {
+          pre = {
+            write = function() pcall(vim.cmd, 'Neotree close') end,
+            read = function()
+              for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                local ft = vim.bo[buf].filetype
+                local name = vim.api.nvim_buf_get_name(buf)
+
+                if ft == 'Neotree' or ft == 'neo-tree' or name:match 'Neotree_' then pcall(vim.api.nvim_buf_delete, buf, { force = true }) end
+              end
+            end,
+          },
+        },
+        directory = '~/.local/share/nvim-sessions/',
+      }
 
       local statusline = require 'mini.statusline'
       statusline.setup { use_icons = vim.g.have_nerd_font }
