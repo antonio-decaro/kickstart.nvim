@@ -33,3 +33,30 @@ util.map('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 util.map('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 util.map('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 util.map('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+util.map('n', '<leader>Ss', function()
+  MiniSessions.select()
+  pcall(vim.cmd, 'Neotree close')
+end, { desc = 'Select session to load' })
+util.map('n', '<leader>Sw', function()
+  local cwd = vim.fn.getcwd()
+  local session_name = vim.fn.fnamemodify(cwd, ':t')
+  vim.ui.input({ prompt = 'Session name: ', default = session_name }, function(name)
+    if name == nil then
+      vim.notify 'Session save cancelled'
+      return
+    end
+    if name == '' then name = session_name end
+    pcall(vim.cmd, 'Neotree close')
+    -- Wipe tree buffers to avoid "Buffer with this name already exists"
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+      local ft = vim.bo[buf].filetype
+      local name = vim.api.nvim_buf_get_name(buf)
+
+      if ft == 'Neotree' or ft == 'neo-tree' or name:match 'Neotree_' then pcall(vim.api.nvim_buf_delete, buf, { force = true }) end
+    end
+    MiniSessions.write(name)
+    vim.notify('Session saved as ' .. name)
+  end)
+end, { desc = 'Write current session' })
+util.map('n', '<leader>Sd', function() MiniSessions.delete(nil, { force = true }) end, { desc = 'Delete current session' })
