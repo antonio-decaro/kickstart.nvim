@@ -28,8 +28,10 @@ return {
   {
     'mrjones2014/smart-splits.nvim',
     config = function()
+      local is_ssh = (vim.env.SSH_CONNECTION ~= nil) or (vim.env.SSH_TTY ~= nil)
+
       require('smart-splits').setup {
-        multiplexer_integration = 'wezterm',
+        multiplexer_integration = is_ssh and 'tmux' or 'wezterm',
       }
 
       local ss = require 'smart-splits'
