@@ -33,6 +33,10 @@ vim.o.breakindent = true
 -- Save undo history
 vim.o.undofile = true
 
+-- Fold capabilities
+vim.o.foldmethod = 'indent'
+vim.o.foldlevel = 99
+
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.o.ignorecase = true
 vim.o.smartcase = true
