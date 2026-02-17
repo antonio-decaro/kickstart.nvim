@@ -10,11 +10,26 @@ return {
       delay = 0,
       icons = { mappings = vim.g.have_nerd_font },
 
+      triggers = {
+        { '<auto>', mode = 'nxso' },
+        { 's', mode = 'nx' }, -- normal + visual (visual is "x")
+      },
+
       -- Document existing key chains
       spec = {
         { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+
+        -- mini.surround (prefix: s)
+        { 's', group = 'Surround', mode = { 'n', 'v' } },
+        { 'sa', desc = 'Add surrounding', mode = { 'n', 'v' } },
+        { 'sd', desc = 'Delete surrounding', mode = { 'n', 'v' } },
+        { 'sf', desc = 'Find surrounding →', mode = { 'n', 'v' } },
+        { 'sF', desc = 'Find surrounding ←', mode = { 'n', 'v' } },
+        { 'sh', desc = 'Highlight surrounding', mode = { 'n', 'v' } },
+        { 'sr', desc = 'Replace surrounding', mode = { 'n', 'v' } },
+        { 'sn', desc = 'Update n_lines', mode = { 'n', 'v' } },
       },
     },
   },
@@ -175,11 +190,21 @@ return {
     'nvim-mini/mini.nvim',
     config = function()
       require('mini.ai').setup { n_lines = 500 }
-      require('mini.surround').setup()
+      require('mini.surround').setup {
+        highlight_duration = 500,
+        n_lines = 500,
+        mappings = {
+          add = 'sa', -- Add surrounding in Normal and Visual modes
+          delete = 'sd', -- Delete surrounding
+          find = 'sf', -- Find surrounding (to the right)
+          find_left = 'sF', -- Find surrounding (to the left)
+          highlight = 'sh', -- Highlight surrounding
+          replace = 'sr', -- Replace surrounding
+          update_n_lines = 'sn', -- Update `n_lines`
+        },
+      }
       local session_dir = vim.fn.expand '~/.local/share/nvim-session'
-      if vim.fn.isdirectory(session_dir) == 0 then
-        session_dir = vim.fn.expand '~/.local/share/nvim-sessions'
-      end
+      if vim.fn.isdirectory(session_dir) == 0 then session_dir = vim.fn.expand '~/.local/share/nvim-sessions' end
       require('mini.sessions').setup {
         autoread = false,
         autowrite = true,
