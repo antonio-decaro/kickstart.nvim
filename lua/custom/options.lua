@@ -37,6 +37,20 @@ vim.o.undofile = true
 vim.o.foldmethod = 'indent'
 vim.o.foldlevel = 99
 
+-- Disable folds in Neo-tree windows while keeping global fold settings.
+local neotree_fold_group = vim.api.nvim_create_augroup('neotree-disable-folds', { clear = true })
+vim.api.nvim_create_autocmd({ 'FileType', 'BufWinEnter', 'WinEnter' }, {
+  group = neotree_fold_group,
+  callback = function(args)
+    local buf = args.buf or vim.api.nvim_get_current_buf()
+    if vim.bo[buf].filetype ~= 'neo-tree' then return end
+
+    -- `foldenable` is window-local, so enforce it when entering Neo-tree windows.
+    vim.wo.foldenable = false
+    vim.wo.foldmethod = 'manual'
+  end,
+})
+
 -- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
 vim.o.ignorecase = true
 vim.o.smartcase = true
