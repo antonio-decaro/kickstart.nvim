@@ -1,94 +1,96 @@
 return {
-  { -- A nice dashboard when you open Neovim
+  {
     'nvimdev/dashboard-nvim',
     event = 'VimEnter',
-    config = function()
-      local displayed_sessions = {}
+    opts = function()
+      local session_dir = vim.fn.expand '~/.local/share/nvim-session'
+      if vim.fn.isdirectory(session_dir) == 0 then session_dir = vim.fn.expand '~/.local/share/nvim-sessions' end
+      local sessions = {}
 
-      local function get_recent_sessions(limit)
-        local sessions_dir = vim.fn.expand '~/.local/share/nvim-sessions'
-        local session_files = vim.fn.globpath(sessions_dir, '*', false, true)
-        local sessions = {}
-
-        table.sort(session_files, function(a, b) return vim.fn.getftime(a) > vim.fn.getftime(b) end)
-
-        for _, file in ipairs(session_files) do
-          if vim.fn.filereadable(file) == 1 then
-            local session_name = vim.fn.fnamemodify(file, ':t'):gsub('%.vim$', '')
-            sessions[#sessions + 1] = { name = session_name, file = file }
-            if #sessions >= limit then break end
-          end
-        end
-
-        return sessions
+      for _, path in ipairs(vim.fn.globpath(session_dir, '*', false, true)) do
+        local name = vim.fn.fnamemodify(path, ':t')
+        if name ~= '' then table.insert(sessions, name) end
       end
 
-      local function sessions_footer()
-        displayed_sessions = get_recent_sessions(8)
-        local lines = { '', '󱂬 Sessions' }
+      table.sort(sessions)
 
-        for index, session in ipairs(displayed_sessions) do
-          lines[#lines + 1] = string.format('   [%d] %s', index, session.name)
-        end
-
-        if #displayed_sessions == 0 then lines[#lines + 1] = '   No saved sessions' end
-
-        return lines
-      end
-
-      local function open_session_under_cursor()
-        local line = vim.trim(vim.api.nvim_get_current_line())
-        local index = tonumber(line:match '^%[(%d+)%]')
-        local session = index and displayed_sessions[index]
-
-        if not session then return false end
-
-        pcall(vim.cmd, 'Neotree close')
-        MiniSessions.read(session.name)
-        return true
-      end
-
-      require('dashboard').setup {
-        theme = 'hyper',
-        config = {
-          project = {
-            enable = true,
-            limit = 8,
-            icon = '󰉋 ',
-            label = 'Projects',
-            action = 'Telescope find_files cwd=',
-          },
-          mru = {
-            enable = true,
-            limit = 10,
-            icon = '󰈙 ',
-            label = 'Recent Files',
-            cwd_only = false,
-          },
-          footer = sessions_footer(),
+      local center = {
+        {
+          action = function() require('telescope.builtin').find_files() end,
+          desc = ' Find File',
+          icon = ' ',
+          key = 'f',
         },
+        { action = 'ene | startinsert', desc = ' New File', icon = ' ', key = 'n' },
+        {
+          action = function() require('telescope.builtin').oldfiles() end,
+          desc = ' Recent Files',
+          icon = ' ',
+          key = 'r',
+        },
+        {
+          action = function() require('telescope.builtin').live_grep() end,
+          desc = ' Find Text',
+          icon = ' ',
+          key = 'g',
+        },
+        {
+          action = function() require('telescope.builtin').find_files { cwd = vim.fn.stdpath 'config' } end,
+          desc = ' Config',
+          icon = ' ',
+          key = 'c',
+        },
+        {
+          action = function()
+            require('mini.sessions').select()
+            pcall(vim.cmd, 'Neotree close')
+          end,
+          desc = ' Select Session',
+          icon = ' ',
+          key = 's',
+        },
+        { action = 'Lazy', desc = ' Plugin Manager', icon = '󰒲 ', key = 'l' },
       }
 
-      vim.api.nvim_create_autocmd('User', {
-        pattern = 'DashboardLoaded',
-        callback = function(args)
-          local default_enter = vim.fn.maparg('<CR>', 'n', false, true)
-          local default_enter_callback = type(default_enter) == 'table' and default_enter.callback or nil
+      for i, name in ipairs(sessions) do
+        if i > 5 then break end
+        table.insert(center, {
+          action = function()
+            require('mini.sessions').read(name)
+            pcall(vim.cmd, 'Neotree close')
+          end,
+          desc = ' Session: ' .. name,
+          icon = '󱂬 ',
+          key = tostring(i),
+        })
+      end
 
-          vim.keymap.set('n', '<CR>', function()
-            if open_session_under_cursor() then return end
-            if default_enter_callback then default_enter_callback() end
-          end, { buffer = args.buf, silent = true, nowait = true })
-
-          vim.keymap.set('n', '<LeftMouse>', function()
-            vim.cmd.normal { args = { '<LeftMouse>' }, bang = true }
-            open_session_under_cursor()
-          end, { buffer = args.buf, silent = true, nowait = true })
-        end,
+      table.insert(center, {
+        action = function() vim.api.nvim_input '<cmd>qa<cr>' end,
+        desc = ' Quit',
+        icon = ' ',
+        key = 'q',
       })
+
+      return {
+        theme = 'doom',
+        config = {
+          hide = {
+            statusline = false,
+          },
+
+          center = center,
+
+          footer = function()
+            local stats = require('lazy').stats()
+            local ms = (math.floor(stats.startuptime * 100 + 0.5) / 100)
+            return { '⚡ Neovim loaded ' .. stats.loaded .. '/' .. stats.count .. ' plugins in ' .. ms .. 'ms' }
+          end,
+        },
+      }
     end,
-    dependencies = { { 'nvim-tree/nvim-web-devicons' } },
   },
+
   { -- Display a nice notification when you save a file
     'folke/noice.nvim',
     event = 'VeryLazy',

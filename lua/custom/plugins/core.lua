@@ -176,6 +176,10 @@ return {
     config = function()
       require('mini.ai').setup { n_lines = 500 }
       require('mini.surround').setup()
+      local session_dir = vim.fn.expand '~/.local/share/nvim-session'
+      if vim.fn.isdirectory(session_dir) == 0 then
+        session_dir = vim.fn.expand '~/.local/share/nvim-sessions'
+      end
       require('mini.sessions').setup {
         autoread = false,
         autowrite = true,
@@ -195,7 +199,7 @@ return {
             end,
           },
         },
-        directory = '~/.local/share/nvim-sessions/',
+        directory = session_dir,
       }
 
       local statusline = require 'mini.statusline'
