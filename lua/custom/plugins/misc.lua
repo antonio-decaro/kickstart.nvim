@@ -7,6 +7,7 @@ return {
     'antonio-decaro/csvlens',
     cmd = { 'CsvLens', 'CsvWhere', 'CsvSortBy', 'CsvGroupBy', 'CsvAgg', 'CsvCols', 'CsvLimit', 'CsvOps', 'CsvReset' },
     opts = {
+      shell_backend = 'terminal',
       -- python = 'python3',
       -- limit = 500,
     },
