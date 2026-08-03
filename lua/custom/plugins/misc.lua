@@ -4,7 +4,7 @@
 -- See the kickstart.nvim README for more information
 return {
   {
-    'antonio-decaro/csvlens',
+    'antonio-decaro/csvlens.nvim',
     cmd = { 'CsvLens', 'CsvWhere', 'CsvSortBy', 'CsvGroupBy', 'CsvAgg', 'CsvCols', 'CsvLimit', 'CsvOps', 'CsvReset' },
     opts = {
       shell_backend = 'terminal',
