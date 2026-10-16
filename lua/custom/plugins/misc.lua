@@ -4,6 +4,15 @@
 -- See the kickstart.nvim README for more information
 return {
   {
+    'antonio-decaro/csvlens.nvim',
+    cmd = { 'CsvLens', 'CsvWhere', 'CsvSortBy', 'CsvGroupBy', 'CsvAgg', 'CsvCols', 'CsvLimit', 'CsvOps', 'CsvReset' },
+    opts = {
+      shell_backend = 'terminal',
+      -- python = 'python3',
+      -- limit = 500,
+    },
+  },
+  {
     'hat0uma/csvview.nvim',
     opts = {
       parser = { comments = { '#', '//' } },
