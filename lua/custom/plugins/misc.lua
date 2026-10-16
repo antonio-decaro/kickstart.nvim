@@ -48,4 +48,38 @@ return {
       vim.keymap.set('n', '<A-l>', ss.resize_right, { desc = 'Resize right (nvim/wezterm)' })
     end,
   },
+  {
+    'the-mayankjha/fk_markdown.nvim',
+    config = function() require('fk_markdown').setup {} end,
+  },
+  {
+    'frabjous/knap',
+    ft = { 'tex', 'markdown' },
+    config = function()
+      vim.g.knap_settings = {
+        -- LaTeX: compile with the TeX distribution installed on this Mac and
+        -- open the generated PDF in the default macOS PDF application.
+        texoutputext = 'pdf',
+        textopdf = 'pdflatex -synctex=1 -halt-on-error -interaction=nonstopmode %docroot%',
+        textopdfviewerlaunch = 'open %outputfile%',
+        textopdfviewerrefresh = 'none',
+        -- Knap defaults to rubber-info, which is not installed on this Mac.
+        -- Read the first TeX error directly from the compilation log instead.
+        textopdfshorterror = 'A=%outputfile% ; LOGFILE="${A%.pdf}.log" ; grep -m 1 "^!" "$LOGFILE" || tail -n 1 "$LOGFILE"',
+
+        -- Markdown: render a standalone HTML document with Pandoc, then open
+        -- it with the application registered for HTML files.
+        mdoutputext = 'html',
+        mdtohtml = 'pandoc --standalone %docroot% -o %outputfile%',
+        mdtohtmlviewerlaunch = 'open %outputfile%',
+        mdtohtmlviewerrefresh = 'none',
+      }
+
+      local kmap = vim.keymap.set
+      kmap({ 'n', 'v', 'i' }, '<F5>', function() require('knap').process_once() end)
+      kmap({ 'n', 'v', 'i' }, '<F6>', function() require('knap').close_viewer() end)
+      kmap({ 'n', 'v', 'i' }, '<F7>', function() require('knap').toggle_autopreviewing() end)
+      kmap({ 'n', 'v', 'i' }, '<F8>', function() require('knap').forward_jump() end)
+    end,
+  },
 }
